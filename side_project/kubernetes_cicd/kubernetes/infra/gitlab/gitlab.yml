@@ -1,0 +1,103 @@
+#apiVersion: v1
+#kind: Namespace
+#metadata:
+#  name: infra
+#---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: gitlab
+#  namespace: infra
+spec:
+  selector:
+    matchLabels:
+      app: gitlab
+  serviceName: gitlab
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: gitlab
+    spec:
+      containers:
+        - name: gitlab
+          image: gitlab/gitlab-ce:14.2.3-ce.0
+          env:
+            - name: GITLAB_OMNIBUS_CONFIG
+              value: |
+                # external_url 'https://gitlab.hsoo.co.kr'
+                grafana['enable'] = false
+                prometheus_monitoring['enable'] = false
+                alertmanager['enable'] = false
+                postgresql['enable'] = true
+                redis['enable'] = true
+                # Just 2 workers
+                puma['worker_processes'] = 1
+                # 10 jobs is still quite a lot
+                sidekiq['max_concurrency'] = 3
+          ports:
+            - containerPort: 80
+              name: web
+            - containerPort: 22
+              name: ssh
+          volumeMounts:
+            - name: gitlabdata
+              mountPath: /etc/gitlab
+              subPath: config
+            - name: gitlabdata
+              mountPath: /var/log/gitlab
+              subPath: logs
+            - name: gitlabdata
+              mountPath: /var/opt/gitlab
+              subPath: data
+      volumes:
+        - name: gitlabdata
+          persistentVolumeClaim:
+            claimName: gitlabdata
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitlabdata
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitlab
+spec:
+  selector:
+    app: gitlab
+  ports:
+    - port: 80
+      targetPort: 80
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitlab-nodeport
+spec:
+  selector:
+    app: gitlab
+  ports:
+    - port: 80
+      targetPort: 80
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitlab-ssh
+spec:
+  selector:
+    app: gitlab-ssh
+  ports:
+    - port: 22
+      targetPort: 22
+  type: ClusterIP

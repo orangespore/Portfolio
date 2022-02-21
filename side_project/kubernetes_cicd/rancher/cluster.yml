@@ -1,0 +1,23 @@
+# 서버 정보 입력 필요
+
+nodes:
+  - address: x.x.x.x
+    internal_address: x.x.x.x
+    user: ubuntu
+    role: [controlplane,etcd,worker]
+    hostname_override: server1
+    ssh_key_path: ${server1 key path}
+
+  - address: x.x.x.x
+    internal_address: x.x.x.x
+    user: ubuntu
+    role: [controlplane,worker,etcd]
+    hostname_override: server2
+    ssh_key_path: ${server1 key path}
+
+  - address: x.x.x.x
+    internal_address: x.x.x.x
+    user: ubuntu
+    role: [controlplane,worker,etcd]
+    hostname_override: server3
+    ssh_key_path: ${server1 key path}

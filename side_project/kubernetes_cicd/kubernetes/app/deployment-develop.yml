@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-demo
+  namespace: demo-develop
+spec:
+  selector:
+    matchLabels:
+      app: django-demo
+  template:
+    metadata:
+      labels:
+        app: django-demo
+    spec:
+      containers:
+      - name: django-demo
+        image: heemok348/django-demo-master
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8000
+      imagePullSecrets:
+      - name: heemok-registry
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-demo
+  namespace: demo-develop
+spec:
+  selector:
+    app: django-demo
+  ports:
+  - port: 8000
+    targetPort: 8000
+    nodePort: 30003
+  type: NodePort
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: heemok-registry
+  namespace: demo-develop
+type: kubernetes.io/dockerconfigjson
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJpbmRleC5kb2NrZXIuaW8vdjEvIjp7InVzZXJuYW1lIjoiaGVlbW9rMzQ4IiwicGFzc3dvcmQiOiJkbWxndXMzNDgifX19

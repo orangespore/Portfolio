@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: jenkins
+spec:
+  selector:
+    matchLabels:
+      app: jenkins
+  serviceName: jenkins
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      containers:
+      - name: jenkins
+        image: jenkinsci/blueocean:1.25.0
+        ports:
+        - containerPort: 8080
+          name: web
+        volumeMounts:
+        - name: docker
+          mountPath: /var/run/docker.sock
+        - name: jenkins-data
+          mountPath: /jenkins_home
+          subPath: data
+        securityContext:
+          privileged: true
+          allowPrivilegeEscalation: true
+          runAsUser: 0
+      volumes:
+        - name: docker
+          hostPath: 
+            path: /var/run/docker.sock
+            type: Socket
+        - name: jenkins-data
+          persistentVolumeClaim:
+            claimName: jenkins-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jenkins-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins
+spec:
+  selector:
+    app: jenkins
+  ports:
+  - port: 8080
+    targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-nodeport
+spec:
+  selector:
+    app: jenkins
+  ports:
+  - port: 8080
+    targetPort: 8080
+  type: NodePort
+

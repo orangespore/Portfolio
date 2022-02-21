@@ -1,0 +1,8 @@
+[INFO] 2022-01-18 01:15:32,661 >>	load data
+[ERROR] 2022-01-18 01:15:32,661 >>	please modify name of file : FileNotFoundError(2, 'File C:/Users/admin/PycharmProjects/analysis/reg_module/dataset/train1.csv does not exist')
+[INFO] 2022-01-18 01:18:00,548 >>	load data
+[ERROR] 2022-01-18 01:18:00,549 >>	please modify name of file : FileNotFoundError(2, 'File C:/Users/admin/PycharmProjects/analysis/reg_module/dataset/train1.csv does not exist')
+[INFO] 2022-01-20 14:06:35,092 >>	load data
+[ERROR] 2022-01-20 14:06:35,093 >>	please modify name of file : FileNotFoundError(2, 'File C:/Users/admin/PycharmProjects/analysis/reg_module/dataset/train1.csv does not exist')
+[INFO] 2022-01-20 15:57:55,901 >>	load data
+[ERROR] 2022-01-20 15:57:55,902 >>	please modify name of file : FileNotFoundError(2, 'File C:/Users/admin/PycharmProjects/analysis/reg_module/dataset/train1.csv does not exist')
